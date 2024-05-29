@@ -6,8 +6,9 @@ using UnityEngine.SceneManagement;
 using TMPro;
 
 
-public class NewBehaviourScript : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
+    public GameManager gameManager;
     int score = 0;
     [SerializeField] private GameObject scoreText;
     [SerializeField] float velocity = 10f;
@@ -36,12 +37,21 @@ public class NewBehaviourScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        SceneManager.LoadScene(0);
+        //SceneManager.LoadScene(0);
+        gameManager.GameOver();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        score++;
-        scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
+        if (collision.gameObject.CompareTag("Star"))
+        {
+            Destroy(collision.gameObject);
+            gameManager.ActivateDoubleScore();
+        }
+        else if (collision.gameObject.CompareTag("Pipe"))
+        {
+            score += gameManager.IsDoubleScoreActive() ? 2 : 1;
+            scoreText.GetComponent<TextMeshProUGUI>().text = score.ToString();
+        }
     }
 }
